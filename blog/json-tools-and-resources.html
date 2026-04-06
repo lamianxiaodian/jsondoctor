@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Tools and Resources - JSON Doctor Blog</title>
+  <meta name="description" content="A comprehensive guide to JSON tools, libraries, and resources for developers working with JSON data.">
+  <meta name="keywords" content="JSON tools, JSON libraries, JSON resources, JSON editor, JSON validator, JSON formatter, JSON parser">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON Tools and Resources</h1>
+    </div>
+    <div class="content">
+      <p>Working with JSON is easier with the right tools. This guide covers the best JSON tools, libraries, and resources for developers.</p>
+      
+      <h2>Online JSON Tools</h2>
+      
+      <h3>JSON Doctor (This Tool!)</h3>
+      <p>Our free online tool for formatting, validating, and minifying JSON. No data leaves your browser - everything is processed locally.</p>
+      <ul>
+        <li>Format and beautify JSON</li>
+        <li>Validate JSON syntax</li>
+        <li>Minify JSON for production</li>
+        <li>Copy results with one click</li>
+      </ul>
+      
+      <h3>Other Popular Online Tools</h3>
+      <ul>
+        <li><strong>JSONLint:</strong> Classic JSON validator</li>
+        <li><strong>JSON Editor Online:</strong> Visual JSON editor with tree view</li>
+        <li><strong>JSON to CSV Converter:</strong> Convert between formats</li>
+        <li><strong>JSON Schema Validator:</strong> Validate against JSON Schema</li>
+      </ul>
+      
+      <h2>Command Line Tools</h2>
+      
+      <h3>jq - The JSON Processor</h3>
+      <p>jq is a powerful command-line JSON processor that lets you slice, filter, map, and transform JSON data.</p>
+      <pre><code># Pretty print JSON
+cat data.json | jq '.'
+
+# Extract a field
+cat data.json | jq '.name'
+
+# Filter array
+cat data.json | jq '.users[] | select(.age > 18)'
+
+# Transform data
+cat data.json | jq '{name: .name, email: .contact.email}'</code></pre>
+      
+      <h3>json (Python tool)</h3>
+      <pre><code># Install
+pip install json-tool
+
+# Pretty print
+python -m json.tool data.json
+
+# Sort keys
+python -m json.tool --sort-keys data.json</code></pre>
+      
+      <h2>JavaScript Libraries</h2>
+      
+      <h3>Native JSON Object</h3>
+      <pre><code>// Built into modern browsers
+JSON.parse(string)
+JSON.stringify(object)
+JSON.stringify(object, null, 2) // Pretty print</code></pre>
+      
+      <h3>AJV - JSON Schema Validator</h3>
+      <pre><code>const Ajv = require('ajv');
+const ajv = new Ajv();
+
+const schema = {
+  type: 'object',
+  properties: {
+    name: {type: 'string'}
+  },
+  required: ['name']
+};
+
+const validate = ajv.compile(schema);
+const valid = validate(data);</code></pre>
+      
+      <h3>fast-json-stringify</h3>
+      <pre><code>const fastJson = require('fast-json-stringify');
+
+const stringify = fastJson({
+  type: 'object',
+  properties: {
+    name: {type: 'string'}
+  }
+});
+
+const json = stringify({name: 'John'});</code></pre>
+      
+      <h2>Python Libraries</h2>
+      
+      <h3>Built-in json Module</h3>
+      <pre><code>import json
+
+# Parse JSON
+data = json.loads(json_string)
+
+# Generate JSON
+json_string = json.dumps(data)
+json_string = json.dumps(data, indent=2)  # Pretty print</code></pre>
+      
+      <h3>orjson - Fast JSON Library</h3>
+      <pre><code>import orjson
+
+# Parse JSON
+data = orjson.loads(json_string)
+
+# Generate JSON (returns bytes)
+json_bytes = orjson.dumps(data)
+json_bytes = orjson.dumps(data, option=orjson.OPT_INDENT_2)</code></pre>
+      
+      <h3>jsonschema - JSON Schema Validation</h3>
+      <pre><code>from jsonschema import validate
+
+schema = {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"}
+    },
+    "required": ["name"]
+}
+
+validate(instance=data, schema=schema)</code></pre>
+      
+      <h2>IDE Extensions</h2>
+      
+      <h3>VS Code</h3>
+      <ul>
+        <li><strong>JSON Tools:</strong> Format, minify, and validate JSON</li>
+        <li><strong>JSON to TS:</strong> Convert JSON to TypeScript interfaces</li>
+        <li><strong>JSON Schema:</strong> Schema validation and autocomplete</li>
+      </ul>
+      
+      <h3>WebStorm / IntelliJ</h3>
+      <ul>
+        <li>Built-in JSON support with schema validation</li>
+        <li>JSON path queries</li>
+        <li>Format and reformat options</li>
+      </ul>
+      
+      <h2>Browser Extensions</h2>
+      <ul>
+        <li><strong>JSONView:</strong> Formats JSON in browser</li>
+        <li><strong>JSON Formatter:</strong> Pretty prints JSON responses</li>
+        <li><strong>JSON Editor:</strong> Edit JSON in browser</li>
+      </ul>
+      
+      <h2>Learning Resources</h2>
+      <ul>
+        <li><strong>JSON.org:</strong> Official JSON specification</li>
+        <li><strong>JSON Schema:</strong> JSON Schema documentation</li>
+        <li><strong>MDN Web Docs:</strong> JavaScript JSON reference</li>
+        <li><strong>Learn JSON:</strong> Interactive tutorials</li>
+      </ul>
+      
+      <h2>Best Practices for Tool Selection</h2>
+      <ul>
+        <li>Use online tools for quick validation and formatting</li>
+        <li>Use command-line tools for automation and scripting</li>
+        <li>Use native libraries for production applications</li>
+        <li>Use IDE extensions for development workflow</li>
+        <li>Use fast libraries for performance-critical applications</li>
+      </ul>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

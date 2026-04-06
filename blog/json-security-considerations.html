@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Security Considerations - JSON Doctor Blog</title>
+  <meta name="description" content="Explore security vulnerabilities and best practices when working with JSON, including injection attacks, CSRF, and data sanitization.">
+  <meta name="keywords" content="JSON security, JSON injection, JSON security best practices, JSON hijacking, JSON CSRF, JSON security vulnerabilities">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON Security Considerations</h1>
+    </div>
+    <div class="content">
+      <p>While JSON is a simple data format, improper handling can lead to serious security vulnerabilities. This guide covers the most common security issues and how to prevent them.</p>
+      
+      <h2>1. JSON Injection Attacks</h2>
+      <p>JSON injection occurs when untrusted data is inserted into JSON without proper escaping, potentially changing the structure or meaning of the data.</p>
+      
+      <div class="warning">
+        <strong>Vulnerable Code:</strong>
+      </div>
+      <pre><code>// DANGEROUS: Manual JSON construction
+const json = '{"name": "' + userInput + '"}';
+
+// Attacker input: hello", "admin": true, "x": "
+// Result: {"name": "hello", "admin": true, "x": ""}</code></pre>
+      
+      <h3>Safe Alternative</h3>
+      <pre><code>// SAFE: Use JSON.stringify
+const json = JSON.stringify({name: userInput});</code></pre>
+      
+      <h2>2. JSON Hijacking</h2>
+      <p>JSON hijacking is an attack where a malicious site reads JSON data from another site by exploiting how browsers handle script tags.</p>
+      
+      <h3>Prevention</h3>
+      <pre><code>// Always serve sensitive JSON with proper Content-Type
+Content-Type: application/json
+
+// Or prefix JSON with "while(1);" or similar
+while(1);{"secret": "data"}
+
+// Client removes prefix before parsing
+const data = JSON.parse(response.substring(9));</code></pre>
+      
+      <h2>3. Cross-Site Request Forgery (CSRF) with JSON</h2>
+      <p>Attackers can sometimes trick browsers into sending JSON requests to vulnerable endpoints.</p>
+      
+      <h3>Prevention</h3>
+      <ul>
+        <li>Use CSRF tokens for state-changing operations</li>
+        <li>Check the Content-Type header</li>
+        <li>Require custom headers that browsers can't send cross-origin</li>
+      </ul>
+      
+      <pre><code>// Server-side check
+app.post('/api/data', (req, res) => {
+  // Verify Content-Type
+  if (req.headers['content-type'] !== 'application/json') {
+    return res.status(400).send('Invalid Content-Type');
+  }
+  
+  // Verify CSRF token
+  if (req.headers['x-csrf-token'] !== session.csrfToken) {
+    return res.status(403).send('Invalid CSRF token');
+  }
+  
+  // Process request
+});</code></pre>
+      
+      <h2>4. Prototype Pollution</h2>
+      <p>In JavaScript, merging objects with user-controlled keys can pollute the Object prototype.</p>
+      
+      <div class="warning">
+        <strong>Vulnerable Code:</strong>
+      </div>
+      <pre><code>// DANGEROUS: Unsafe merge
+function merge(target, source) {
+  for (const key in source) {
+    target[key] = source[key];
+  }
+}
+
+// Attacker JSON: {"__proto__": {"admin": true}}</code></pre>
+      
+      <h3>Safe Alternative</h3>
+      <pre><code>// SAFE: Block dangerous keys
+function safeMerge(target, source) {
+  const blocked = ['__proto__', 'constructor', 'prototype'];
+  for (const key in source) {
+    if (!blocked.includes(key)) {
+      target[key] = source[key];
+    }
+  }
+}</code></pre>
+      
+      <h2>5. Denial of Service via JSON Parsing</h2>
+      <p>Maliciously crafted JSON can cause excessive memory usage or CPU consumption during parsing.</p>
+      
+      <h3>Deep Nesting Attack</h3>
+      <pre><code>// Deeply nested JSON can cause stack overflow
+{"a":{"a":{"a":{"a":...}}}}</code></pre>
+      
+      <h3>Prevention</h3>
+      <pre><code>// Limit JSON size
+app.use(express.json({ limit: '100kb' }));
+
+// Limit nesting depth (custom parser)
+function parseWithDepthLimit(json, maxDepth = 10) {
+  let depth = 0;
+  return JSON.parse(json, (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      depth++;
+      if (depth > maxDepth) {
+        throw new Error('Maximum depth exceeded');
+      }
+    }
+    return value;
+  });
+}</code></pre>
+      
+      <h2>6. Sensitive Data Exposure</h2>
+      <p>Accidentally including sensitive data in JSON responses is a common security issue.</p>
+      
+      <h3>Prevention</h3>
+      <pre><code>// Never return full database objects
+app.get('/api/user/:id', async (req, res) => {
+  const user = await db.getUser(req.params.id);
+  
+  // SAFE: Explicitly select fields
+  res.json({
+    id: user.id,
+    name: user.name,
+    email: user.email
+    // password, ssn, etc. are excluded
+  });
+});</code></pre>
+      
+      <h2>7. Content-Type Validation</h2>
+      <p>Always validate the Content-Type header when receiving JSON.</p>
+      <pre><code>// Server-side validation
+app.post('/api/data', (req, res) => {
+  const contentType = req.headers['content-type'];
+  
+  if (!contentType || !contentType.includes('application/json')) {
+    return res.status(415).json({
+      error: 'Content-Type must be application/json'
+    });
+  }
+  
+  // Process JSON
+});</code></pre>
+      
+      <h2>8. Security Checklist</h2>
+      <ul>
+        <li>Always use JSON.stringify() instead of string concatenation</li>
+        <li>Validate and sanitize all JSON input</li>
+        <li>Use proper Content-Type headers</li>
+        <li>Implement CSRF protection for state-changing requests</li>
+        <li>Limit JSON payload size</li>
+        <li>Filter sensitive fields before serialization</li>
+        <li>Use HTTPS for JSON transmission</li>
+        <li>Keep JSON parsing libraries updated</li>
+      </ul>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

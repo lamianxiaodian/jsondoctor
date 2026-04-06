@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON with TypeScript: Type Safety and Best Practices - JSON Doctor Blog</title>
+  <meta name="description" content="Learn how to effectively use JSON with TypeScript, including type definitions, type guards, and best practices for type-safe JSON handling.">
+  <meta name="keywords" content="JSON TypeScript, TypeScript JSON parsing, TypeScript interfaces, type-safe JSON, JSON schema TypeScript, TypeScript type guards">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON with TypeScript: Type Safety and Best Practices</h1>
+    </div>
+    <div class="content">
+      <p>TypeScript brings type safety to JavaScript, and when working with JSON, this becomes even more valuable. In this guide, we'll explore how to effectively handle JSON in TypeScript projects, ensuring type safety throughout the process.</p>
+      
+      <h2>Basic JSON Parsing in TypeScript</h2>
+      <pre><code>// Basic parsing (no type safety)
+const jsonString = '{"name": "John", "age": 30}';
+const user = JSON.parse(jsonString);
+// user is of type 'any' - no type safety
+
+// Better approach: Type assertion
+interface User {
+  name: string;
+  age: number;
+}
+
+const typedUser = JSON.parse(jsonString) as User;
+// typedUser is now of type User</code></pre>
+      
+      <h2>Type Guards for JSON</h2>
+      <p>Type assertions are quick but not safe. For better type safety, use type guards:</p>
+      <pre><code>interface User {
+  name: string;
+  age: number;
+  email?: string;
+}
+
+function isUser(obj: any): obj is User {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.name === 'string' &&
+    typeof obj.age === 'number' &&
+    (obj.email === undefined || typeof obj.email === 'string')
+  );
+}
+
+const jsonString = '{"name": "John", "age": 30}';
+const parsed = JSON.parse(jsonString);
+
+if (isUser(parsed)) {
+  // parsed is now type User
+  console.log(parsed.name); // Safe
+} else {
+  console.error('Invalid user data');
+}</code></pre>
+      
+      <h2>Using JSON Schema with TypeScript</h2>
+      <p>For complex data structures, use JSON Schema with TypeScript:</p>
+      <pre><code>// Install dependencies:
+// npm install json-schema-to-typescript
+
+// user.schema.json
+/*
+{
+  "$id": "user.schema.json",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "age": { "type": "integer" },
+    "email": { "type": "string", "format": "email" }
+  },
+  "required": ["name", "age"]
+}
+*/
+
+// Generate TypeScript types
+// npx json-schema-to-typescript user.schema.json > user.types.ts
+
+// user.types.ts
+/*
+export interface User {
+  name: string;
+  age: number;
+  email?: string;
+}
+*/</code></pre>
+      
+      <h2>Handling Optional and Nullable Fields</h2>
+      <pre><code>interface User {
+  id: number;
+  name: string;
+  email: string | null;
+  address?: {
+    street: string;
+    city: string;
+  };
+}
+
+const jsonString = '{"id": 1, "name": "John", "email": null}';
+const user = JSON.parse(jsonString) as User;
+
+// Safe access to optional fields
+const city = user.address?.city;
+
+// Safe access to nullable fields
+const email = user.email ?? 'No email provided';</code></pre>
+      
+      <h2>Generic JSON Parsing Function</h2>
+      <pre><code>function safeJsonParse<T>(jsonString: string): T | null {
+  try {
+    return JSON.parse(jsonString) as T;
+  } catch (error) {
+    console.error('JSON parsing error:', error);
+    return null;
+  }
+}
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
+
+const productJson = '{"id": 1, "name": "Laptop", "price": 999}';
+const product = safeJsonParse<Product>(productJson);
+
+if (product) {
+  console.log(product.name); // Safe
+}</code></pre>
+      
+      <h2>Working with Arrays</h2>
+      <pre><code>interface User {
+  id: number;
+  name: string;
+}
+
+function parseUsers(jsonString: string): User[] {
+  try {
+    const data = JSON.parse(jsonString);
+    if (!Array.isArray(data)) {
+      throw new Error('Expected array');
+    }
+    return data.map(item => ({
+      id: item.id,
+      name: item.name
+    }));
+  } catch (error) {
+    console.error('Error parsing users:', error);
+    return [];
+  }
+}
+
+const usersJson = '[{"id": 1, "name": "John"}, {"id": 2, "name": "Jane"}]';
+const users = parseUsers(usersJson);</code></pre>
+      
+      <h2>Advanced Type Safety with Zod</h2>
+      <p>For even better type safety, consider using libraries like Zod:</p>
+      <pre><code>// Install: npm install zod
+
+import { z } from 'zod';
+
+// Define schema
+const UserSchema = z.object({
+  name: z.string(),
+  age: z.number(),
+  email: z.string().email().optional(),
+});
+
+// Infer TypeScript type from schema
+type User = z.infer<typeof UserSchema>;
+
+// Parse and validate
+const jsonString = '{"name": "John", "age": 30}';
+
+try {
+  const user = UserSchema.parse(JSON.parse(jsonString));
+  // user is now type User with runtime validation
+  console.log(user.name);
+} catch (error) {
+  console.error('Validation error:', error);
+}
+
+// Safe parsing (doesn't throw)
+const result = UserSchema.safeParse(JSON.parse(jsonString));
+if (result.success) {
+  console.log(result.data.name);
+} else {
+  console.error(result.error);
+}</code></pre>
+      
+      <h2>TypeScript and JSON Serialization</h2>
+      <pre><code>interface User {
+  name: string;
+  age: number;
+  createdAt: Date;
+}
+
+const user: User = {
+  name: "John",
+  age: 30,
+  createdAt: new Date()
+};
+
+// Serialization
+const jsonString = JSON.stringify(user, (key, value) => {
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+  return value;
+});
+
+// Deserialization with type safety
+function deserializeUser(json: string): User {
+  const parsed = JSON.parse(json);
+  return {
+    ...parsed,
+    createdAt: new Date(parsed.createdAt)
+  };
+}
+
+const deserializedUser = deserializeUser(jsonString);</code></pre>
+      
+      <h2>Best Practices</h2>
+      <ul>
+        <li><strong>Always define types:</strong> Create interfaces for all JSON structures</li>
+        <li><strong>Use type guards:</strong> Validate data at runtime</li>
+        <li><strong>Handle errors:</strong> Always wrap JSON.parse() in try-catch</li>
+        <li><strong>Use Zod or similar libraries:</strong> For runtime validation</li>
+        <li><strong>Be explicit about optional fields:</strong> Use ? for optional properties</li>
+        <li><strong>Use JSON Schema:</strong> For shared data contracts</li>
+        <li><strong>Document your types:</strong> Add JSDoc comments to interfaces</li>
+      </ul>
+      
+      <h2>Common Pitfalls</h2>
+      <ul>
+        <li><strong>Overusing any:</strong> Defeats the purpose of TypeScript</li>
+        <li><strong>Ignoring runtime validation:</strong> TypeScript only checks at compile time</li>
+        <li><strong>Forgetting Date objects:</strong> They serialize to strings</li>
+        <li><strong>Complex nested types:</strong> Can become hard to maintain</li>
+      </ul>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

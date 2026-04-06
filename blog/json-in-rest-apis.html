@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON in REST APIs - JSON Doctor Blog</title>
+  <meta name="description" content="Learn how to effectively use JSON in RESTful APIs, including request/response handling, error formatting, and API design best practices.">
+  <meta name="keywords" content="JSON in REST APIs, REST API JSON, JSON API design, REST API best practices, JSON response format, JSON request format">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON in REST APIs: Best Practices</h1>
+    </div>
+    <div class="content">
+      <p>JSON has become the standard format for REST APIs due to its simplicity and wide language support. This guide covers best practices for designing and implementing JSON-based REST APIs.</p>
+      
+      <h2>Request/Response Structure</h2>
+      
+      <h3>Standard Request Headers</h3>
+      <pre><code>POST /api/users HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+
+{
+  "name": "John Doe",
+  "email": "john@example.com"
+}</code></pre>
+      
+      <h3>Standard Response Headers</h3>
+      <pre><code>HTTP/1.1 201 Created
+Content-Type: application/json
+Location: /api/users/123
+
+{
+  "id": 123,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "createdAt": "2024-01-15T10:30:00Z"
+}</code></pre>
+      
+      <h2>Consistent Response Format</h2>
+      
+      <h3>Success Response</h3>
+      <pre><code>{
+  "success": true,
+  "data": {
+    "id": 123,
+    "name": "John Doe"
+  },
+  "meta": {
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}</code></pre>
+      
+      <h3>Error Response</h3>
+      <pre><code>{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "details": [
+      {
+        "field": "email",
+        "message": "Invalid email format"
+      }
+    ]
+  }
+}</code></pre>
+      
+      <h2>Pagination</h2>
+      <pre><code>{
+  "success": true,
+  "data": [...],
+  "pagination": {
+    "page": 1,
+    "perPage": 20,
+    "totalPages": 5,
+    "totalItems": 98
+  },
+  "links": {
+    "first": "/api/users?page=1",
+    "prev": null,
+    "next": "/api/users?page=2",
+    "last": "/api/users?page=5"
+  }
+}</code></pre>
+      
+      <h2>Naming Conventions</h2>
+      
+      <h3>Use camelCase for JSON Keys</h3>
+      <pre><code>// Good
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+
+// Avoid
+{
+  "first_name": "John",
+  "FirstName": "John",
+  "first-name": "John"
+}</code></pre>
+      
+      <h2>Handling Dates and Times</h2>
+      <p>Always use ISO 8601 format for dates and times in JSON APIs.</p>
+      <pre><code>{
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:30:00.123Z",
+  "birthDate": "1990-05-20"
+}</code></pre>
+      
+      <h2>Handling Null vs. Omitted Fields</h2>
+      <pre><code>// Include null for explicitly null values
+{
+  "name": "John",
+  "middleName": null,
+  "lastName": "Doe"
+}
+
+// Omit optional fields that weren't provided
+{
+  "name": "John",
+  "lastName": "Doe"
+}</code></pre>
+      
+      <h2>HTTP Status Codes with JSON</h2>
+      <ul>
+        <li><strong>200 OK:</strong> Successful GET, PUT, PATCH</li>
+        <li><strong>201 Created:</strong> Successful POST that creates a resource</li>
+        <li><strong>204 No Content:</strong> Successful DELETE</li>
+        <li><strong>400 Bad Request:</strong> Invalid JSON or validation errors</li>
+        <li><strong>401 Unauthorized:</strong> Authentication required</li>
+        <li><strong>403 Forbidden:</strong> Authenticated but not authorized</li>
+        <li><strong>404 Not Found:</strong> Resource doesn't exist</li>
+        <li><strong>422 Unprocessable Entity:</strong> Validation errors</li>
+        <li><strong>500 Internal Server Error:</strong> Server error</li>
+      </ul>
+      
+      <h2>Versioning</h2>
+      <pre><code>// URL versioning
+GET /api/v1/users
+GET /api/v2/users
+
+// Header versioning
+Accept: application/vnd.myapi.v1+json
+Accept: application/vnd.myapi.v2+json</code></pre>
+      
+      <h2>Filtering, Sorting, and Searching</h2>
+      <pre><code>// Filtering
+GET /api/users?status=active&role=admin
+
+// Sorting
+GET /api/users?sort=-createdAt,name
+
+// Searching
+GET /api/users?search=john
+
+// Field selection
+GET /api/users?fields=id,name,email</code></pre>
+      
+      <h2>Batch Operations</h2>
+      <pre><code>POST /api/users/batch
+{
+  "operations": [
+    {
+      "action": "create",
+      "data": {"name": "User 1"}
+    },
+    {
+      "action": "update",
+      "id": 123,
+      "data": {"name": "Updated Name"}
+    },
+    {
+      "action": "delete",
+      "id": 456
+    }
+  ]
+}</code></pre>
+      
+      <h2>Best Practices Summary</h2>
+      <ul>
+        <li>Use consistent naming conventions (camelCase)</li>
+        <li>Return appropriate HTTP status codes</li>
+        <li>Include meaningful error messages</li>
+        <li>Use ISO 8601 for dates</li>
+        <li>Implement pagination for collections</li>
+        <li>Version your API</li>
+        <li>Document your JSON schemas</li>
+        <li>Validate all incoming JSON</li>
+      </ul>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

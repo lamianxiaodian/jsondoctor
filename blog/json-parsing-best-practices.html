@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Parsing Best Practices - JSON Doctor Blog</title>
+  <meta name="description" content="Learn the best practices for parsing JSON in various programming languages, including error handling, performance optimization, and security considerations.">
+  <meta name="keywords" content="JSON parsing, JSON parse, JSON parsing best practices, JSON parse error, JSON parsing in JavaScript, JSON parsing in Python">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON Parsing Best Practices</h1>
+    </div>
+    <div class="content">
+      <p>Parsing JSON is a fundamental operation in modern software development. This guide covers best practices for safely and efficiently parsing JSON across different programming languages.</p>
+      
+      <h2>1. Always Use Try-Catch for Parsing</h2>
+      <p>JSON parsing can fail for many reasons: malformed syntax, unexpected data types, or encoding issues. Always wrap parsing in error handling.</p>
+      
+      <h3>JavaScript</h3>
+      <pre><code>function safeParse(jsonString) {
+  try {
+    return JSON.parse(jsonString);
+  } catch (error) {
+    console.error('JSON parsing failed:', error.message);
+    return null;
+  }
+}
+
+const data = safeParse('{"name": "John"}');</code></pre>
+      
+      <h3>Python</h3>
+      <pre><code>import json
+
+def safe_parse(json_string):
+    try:
+        return json.loads(json_string)
+    except json.JSONDecodeError as e:
+        print(f'JSON parsing failed: {e}')
+        return None
+
+data = safe_parse('{"name": "John"}')</code></pre>
+      
+      <h2>2. Validate Data Types After Parsing</h2>
+      <p>Just because JSON parses successfully doesn't mean the data structure is what you expect.</p>
+      <pre><code>function validateUser(data) {
+  if (typeof data !== 'object' || data === null) {
+    throw new Error('Expected an object');
+  }
+  if (typeof data.id !== 'number') {
+    throw new Error('id must be a number');
+  }
+  if (typeof data.name !== 'string') {
+    throw new Error('name must be a string');
+  }
+  return true;
+}
+
+const user = JSON.parse(jsonString);
+validateUser(user);</code></pre>
+      
+      <h2>3. Use Schema Validation Libraries</h2>
+      <p>For complex data structures, use JSON Schema validation instead of manual checks.</p>
+      <pre><code>const Ajv = require('ajv');
+const ajv = new Ajv();
+
+const schema = {
+  type: 'object',
+  properties: {
+    id: {type: 'integer'},
+    name: {type: 'string'}
+  },
+  required: ['id', 'name']
+};
+
+const validate = ajv.compile(schema);
+const valid = validate(data);
+
+if (!valid) {
+  console.error('Validation errors:', validate.errors);
+}</code></pre>
+      
+      <h2>4. Handle Large JSON Files Efficiently</h2>
+      <p>For large JSON files, use streaming parsers to avoid memory issues.</p>
+      
+      <h3>Node.js Streaming</h3>
+      <pre><code>const fs = require('fs');
+const JSONStream = require('JSONStream');
+
+const stream = fs.createReadStream('large-file.json')
+  .pipe(JSONStream.parse('items.*'));
+
+stream.on('data', (item) => {
+  // Process each item
+});</code></pre>
+      
+      <h3>Python Streaming</h3>
+      <pre><code>import ijson
+
+with open('large-file.json', 'rb') as f:
+    for item in ijson.items(f, 'items.item'):
+        # Process each item
+        pass</code></pre>
+      
+      <h2>5. Security Considerations</h2>
+      
+      <h3>Never Use eval() for JSON Parsing</h3>
+      <pre><code>// DANGEROUS - Never do this!
+const data = eval('(' + jsonString + ')');
+
+// Safe - Always use JSON.parse
+const data = JSON.parse(jsonString);</code></pre>
+      
+      <h3>Limit JSON Size</h3>
+      <pre><code>function parseWithLimit(jsonString, maxSize = 1024 * 1024) {
+  if (jsonString.length > maxSize) {
+    throw new Error('JSON exceeds maximum allowed size');
+  }
+  return JSON.parse(jsonString);
+}</code></pre>
+      
+      <h3>Sanitize for Display</h3>
+      <pre><code>function sanitizeForDisplay(obj) {
+  const str = JSON.stringify(obj);
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}</code></pre>
+      
+      <h2>6. Performance Tips</h2>
+      <ul>
+        <li>Cache parsed JSON when possible</li>
+        <li>Use reviver functions sparingly (they slow down parsing)</li>
+        <li>Consider using faster JSON libraries for performance-critical code</li>
+        <li>Minify JSON before transmission</li>
+      </ul>
+      
+      <h2>7. Handle Missing or Null Values</h2>
+      <pre><code>function getValue(data, path, defaultValue = null) {
+  const keys = path.split('.');
+  let current = data;
+  
+  for (const key of keys) {
+    if (current === null || current === undefined) {
+      return defaultValue;
+    }
+    current = current[key];
+  }
+  
+  return current ?? defaultValue;
+}
+
+const user = {profile: {name: 'John'}};
+const name = getValue(user, 'profile.name', 'Unknown');
+const missing = getValue(user, 'profile.age', 0);</code></pre>
+      
+      <h2>8. Pretty Print for Debugging</h2>
+      <pre><code>const data = {name: 'John', age: 30};
+
+// JavaScript
+console.log(JSON.stringify(data, null, 2));
+
+// Python
+import json
+print(json.dumps(data, indent=2))</code></pre>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

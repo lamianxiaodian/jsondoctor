@@ -10,18 +10,20 @@
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, sans-serif}
-    body{background:#0f172a;color:#f1f5f9;padding:2rem 1rem;line-height:1.7}
-    .container{max-width:900px;margin:0 auto}
-    h1,h2{color:#38bdf8;margin:1.5rem 0 1rem}
-    p{margin-bottom:1rem}
-    .footer{text-align:center;margin-top:3rem;color:#94a3b8}
-    .footer a{color:#38bdf8;margin:0 0.4rem}
-  </style>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="blog/index.html" class="nav-link">Blog</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="content">
 <h1>Privacy Policy</h1>
 <p>Last updated: 2026</p>
 
@@ -42,13 +44,14 @@
 
 <h2>6. Contact</h2>
 <p>If you have questions about this policy, you may contact us via our website.</p>
+    </div>
+    <div class="footer">
+<a href="index.html">Home</a>
+<a href="about.html">About</a>
+<a href="terms.html">Terms</a>
+<a href="guide.html">Guide</a>
 </div>
-
-<div class="footer">
-<a href="/">Home</a>
-<a href="/about">About</a>
-<a href="/terms">Terms</a>
-<a href="/guide">Guide</a>
-</div>
+  </div>
+  <script src="js/theme.js"></script>
 </body>
 </html>

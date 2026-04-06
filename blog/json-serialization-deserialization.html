@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Serialization and Deserialization in Modern Frameworks - JSON Doctor Blog</title>
+  <meta name="description" content="Learn how to effectively serialize and deserialize JSON in popular frameworks like React, Angular, Vue, Node.js, and more. Includes code examples and best practices.">
+  <meta name="keywords" content="JSON serialization, JSON deserialization, JSON parsing, JavaScript frameworks, React JSON, Node.js JSON, Angular JSON, Vue JSON">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON Serialization and Deserialization in Modern Frameworks</h1>
+    </div>
+    <div class="content">
+      <p>JSON serialization and deserialization are fundamental operations in modern web development. Every framework has its own approach to handling JSON data, and understanding these differences can significantly improve your development workflow.</p>
+      
+      <h2>What is JSON Serialization and Deserialization?</h2>
+      <p><strong>Serialization</strong> is the process of converting a programming object into a JSON string. <strong>Deserialization</strong> is the reverse process - converting a JSON string back into an object.</p>
+      
+      <h2>Native JavaScript Methods</h2>
+      <pre><code>// Serialization
+const user = { name: "John", age: 30 };
+const jsonString = JSON.stringify(user);
+console.log(jsonString); // {"name":"John","age":30}
+
+// Deserialization
+const parsedUser = JSON.parse(jsonString);
+console.log(parsedUser.name); // John</code></pre>
+      
+      <h2>React and JSON</h2>
+      <h3>Fetch API with JSON</h3>
+      <pre><code>import React, { useState, useEffect } from 'react';
+
+function UserList() {
+  const [users, setUsers] = useState([]);
+  
+  useEffect(() => {
+    // Deserialization happens automatically
+    fetch('https://api.example.com/users')
+      .then(response => response.json())
+      .then(data => setUsers(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
+  
+  const handleSubmit = (userData) => {
+    // Serialization happens automatically
+    fetch('https://api.example.com/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+    .then(response => response.json())
+    .then(data => console.log('Success:', data));
+  };
+  
+  return (
+    <div>
+      {/* Render users */}
+    </div>
+  );
+}</code></pre>
+      
+      <h2>Node.js and Express</h2>
+      <pre><code>const express = require('express');
+const app = express();
+
+// Middleware for automatic deserialization
+app.use(express.json());
+
+// Serialization example
+app.get('/api/user', (req, res) => {
+  const user = { id: 1, name: "John" };
+  // Express automatically serializes objects to JSON
+  res.json(user);
+});
+
+// Deserialization example
+app.post('/api/user', (req, res) => {
+  // req.body is already deserialized
+  console.log(req.body);
+  res.json({ success: true, data: req.body });
+});
+
+app.listen(3000);</code></pre>
+      
+      <h2>Angular</h2>
+      <pre><code>import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+@Injectable()
+export class UserService {
+  constructor(private http: HttpClient) {}
+  
+  getUsers() {
+    // Deserialization happens automatically
+    return this.http.get<any[]>('https://api.example.com/users');
+  }
+  
+  createUser(user: any) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    // Serialization happens automatically
+    return this.http.post('https://api.example.com/users', user, { headers });
+  }
+}</code></pre>
+      
+      <h2>Vue.js</h2>
+      <pre><code><template>
+  <div>
+    <!-- Vue template -->
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      users: []
+    };
+  },
+  mounted() {
+    // Using fetch API
+    fetch('https://api.example.com/users')
+      .then(response => response.json())
+      .then(data => this.users = data);
+  },
+  methods: {
+    async createUser(userData) {
+      const response = await fetch('https://api.example.com/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+      const data = await response.json();
+      console.log(data);
+    }
+  }
+};
+</script></code></pre>
+      
+      <h2>Advanced Serialization Techniques</h2>
+      
+      <h3>Custom Serialization with toJSON()</h3>
+      <pre><code>class User {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+    this.createdAt = new Date();
+  }
+  
+  toJSON() {
+    return {
+      fullName: this.name,
+      yearsOld: this.age,
+      created: this.createdAt.toISOString()
+    };
+  }
+}
+
+const user = new User("John", 30);
+console.log(JSON.stringify(user));
+// {"fullName":"John","yearsOld":30,"created":"2024-01-15T10:30:00Z"}</code></pre>
+      
+      <h3>Custom Deserialization with reviver</h3>
+      <pre><code>const jsonString = '{"name":"John","age":30,"createdAt":"2024-01-15T10:30:00Z"}';
+
+const user = JSON.parse(jsonString, (key, value) => {
+  if (key === 'createdAt') {
+    return new Date(value);
+  }
+  return value;
+});
+
+console.log(user.createdAt instanceof Date); // true</code></pre>
+      
+      <h2>Performance Optimization</h2>
+      <ul>
+        <li><strong>Use faster libraries:</strong> Consider libraries like <code>fast-json-stringify</code> for Node.js</li>
+        <li><strong>Cache parsed data:</strong> Avoid parsing the same JSON multiple times</li>
+        <li><strong>Limit serialization depth:</strong> Only serialize what you need</li>
+        <li><strong>Compress large payloads:</strong> Use gzip for large JSON responses</li>
+      </ul>
+      
+      <h2>Common Pitfalls</h2>
+      <ul>
+        <li><strong>Circular references:</strong> JSON.stringify() will throw an error</li>
+        <li><strong>Undefined values:</strong> Will be omitted from the serialized output</li>
+        <li><strong>Functions:</strong> Will be omitted from the serialized output</li>
+        <li><strong>Date objects:</strong> Will be converted to ISO strings</li>
+      </ul>
+      
+      <h2>Best Practices</h2>
+      <ul>
+        <li>Always validate JSON before deserialization</li>
+        <li>Use type checking after deserialization</li>
+        <li>Handle errors gracefully</li>
+        <li>Use consistent naming conventions</li>
+        <li>Consider using JSON Schema for validation</li>
+      </ul>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

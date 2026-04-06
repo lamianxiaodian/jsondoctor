@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Performance Optimization - JSON Doctor Blog</title>
+  <meta name="description" content="Discover techniques to optimize JSON performance, including minification, compression, streaming, and efficient data structures.">
+  <meta name="keywords" content="JSON performance, JSON optimization, JSON minify, JSON compression, JSON performance tips, optimize JSON">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON Performance Optimization</h1>
+    </div>
+    <div class="content">
+      <p>Optimizing JSON performance is crucial for building fast, responsive applications. This guide covers techniques to reduce JSON size, improve parsing speed, and handle large datasets efficiently.</p>
+      
+      <h2>1. Minification</h2>
+      <p>Removing whitespace and unnecessary characters significantly reduces JSON size.</p>
+      
+      <h3>Before Minification (245 bytes)</h3>
+      <pre><code>{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "jane@example.com"
+    }
+  ]
+}</code></pre>
+      
+      <h3>After Minification (128 bytes)</h3>
+      <pre><code>{"users":[{"id":1,"name":"John Doe","email":"john@example.com"},{"id":2,"name":"Jane Smith","email":"jane@example.com"}]}</code></pre>
+      
+      <h2>2. Compression</h2>
+      <p>Enable gzip or brotli compression on your server for additional size reduction.</p>
+      <pre><code>// Express.js
+const compression = require('compression');
+app.use(compression());
+
+// Nginx
+gzip on;
+gzip_types application/json;</code></pre>
+      
+      <h3>Size Comparison</h3>
+      <ul>
+        <li>Original JSON: 10 KB</li>
+        <li>Minified: 6 KB (40% reduction)</li>
+        <li>Gzipped: 1.5 KB (85% reduction)</li>
+        <li>Brotli: 1.2 KB (88% reduction)</li>
+      </ul>
+      
+      <h2>3. Shorten Property Names</h2>
+      <p>Use shorter property names and provide a mapping for clients.</p>
+      <pre><code>// Verbose
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "emailAddress": "john@example.com",
+  "phoneNumber": "555-1234"
+}
+
+// Optimized with mapping
+{
+  "fn": "John",
+  "ln": "Doe",
+  "e": "john@example.com",
+  "p": "555-1234",
+  "_map": {
+    "fn": "firstName",
+    "ln": "lastName",
+    "e": "emailAddress",
+    "p": "phoneNumber"
+  }
+}</code></pre>
+      
+      <h2>4. Efficient Data Structures</h2>
+      
+      <h3>Use Arrays Instead of Objects for Lists</h3>
+      <pre><code>// Less efficient
+{
+  "users": {
+    "user1": {"name": "John"},
+    "user2": {"name": "Jane"}
+  }
+}
+
+// More efficient
+{
+  "users": [
+    {"id": "user1", "name": "John"},
+    {"id": "user2", "name": "Jane"}
+  ]
+}</code></pre>
+      
+      <h3>Flatten Nested Structures</h3>
+      <pre><code// Deeply nested
+{
+  "user": {
+    "profile": {
+      "address": {
+        "street": "123 Main St",
+        "city": "NYC"
+      }
+    }
+  }
+}
+
+// Flattened
+{
+  "userProfileAddressStreet": "123 Main St",
+  "userProfileAddressCity": "NYC"
+}</code></pre>
+      
+      <h2>5. Streaming Large JSON</h2>
+      <p>For large datasets, use streaming to avoid loading everything into memory.</p>
+      
+      <h3>Node.js Streaming</h3>
+      <pre><code>const { Transform } = require('stream');
+
+class JsonArrayStream extends Transform {
+  constructor() {
+    super({ objectMode: true });
+    this.first = true;
+  }
+  
+  _transform(chunk, encoding, callback) {
+    if (this.first) {
+      this.push('[');
+      this.first = false;
+    } else {
+      this.push(',');
+    }
+    this.push(JSON.stringify(chunk));
+    callback();
+  }
+  
+  _flush(callback) {
+    this.push(']');
+    callback();
+  }
+}</code></pre>
+      
+      <h2>6. Pagination</h2>
+      <p>Never return all records at once. Always implement pagination.</p>
+      <pre><code>// Request
+GET /api/users?page=2&limit=50
+
+// Response
+{
+  "data": [...],
+  "pagination": {
+    "page": 2,
+    "limit": 50,
+    "total": 1000,
+    "pages": 20
+  }
+}</code></pre>
+      
+      <h2>7. Field Selection</h2>
+      <p>Allow clients to request only the fields they need.</p>
+      <pre><code>// Request only needed fields
+GET /api/users?fields=id,name
+
+// Response
+{
+  "data": [
+    {"id": 1, "name": "John"},
+    {"id": 2, "name": "Jane"}
+  ]
+}</code></pre>
+      
+      <h2>8. Caching</h2>
+      <p>Cache parsed JSON to avoid repeated parsing.</p>
+      <pre><code>const cache = new Map();
+
+async function getCachedJson(url) {
+  if (cache.has(url)) {
+    return cache.get(url);
+  }
+  
+  const response = await fetch(url);
+  const data = await response.json();
+  cache.set(url, data);
+  
+  return data;
+}</code></pre>
+      
+      <h2>9. Use Binary JSON Alternatives</h2>
+      <p>For high-performance scenarios, consider binary formats.</p>
+      <ul>
+        <li><strong>MessagePack:</strong> Binary serialization, smaller than JSON</li>
+        <li><strong>Protocol Buffers:</strong> Schema-based, very efficient</li>
+        <li><strong>CBOR:</strong> Concise Binary Object Representation</li>
+        <li><strong>BSON:</strong> Binary JSON used by MongoDB</li>
+      </ul>
+      
+      <h2>10. Performance Benchmarks</h2>
+      <pre><code>// Parsing speed comparison (operations/sec)
+JSON.parse():        1,000,000 ops/sec
+JSON.stringify():      800,000 ops/sec
+fast-json-stringify: 2,500,000 ops/sec
+msgpack-lite:          500,000 ops/sec</code></pre>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

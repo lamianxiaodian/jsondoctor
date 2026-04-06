@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Parse Error: 5 Common Causes & Quick Fixes - JSON Doctor Blog</title>
+  <meta name="description" content="Discover the most common causes of JSON parse errors and learn quick, effective fixes to resolve them immediately. Includes code examples and debugging tips.">
+  <meta name="keywords" content="JSON parse error, JSON parsing, fix JSON error, JSON syntax error, JSON parsing issues, debug JSON">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON Parse Error: 5 Common Causes & Quick Fixes</h1>
+    </div>
+    <div class="content">
+      <p>JSON parse errors are frustrating, but they're usually caused by simple issues that can be fixed quickly. In this guide, we'll explore the most common causes of JSON parse errors and provide step-by-step solutions to resolve them.</p>
+      
+      <h2>1. Syntax Errors</h2>
+      <div class="error-box">
+        <strong>Error Message:</strong> "Unexpected token <em>X</em> in JSON at position <em>N</em>"
+      </div>
+      <h3>Common Causes</h3>
+      <ul>
+        <li>Missing quotes around property names</li>
+        <li>Single quotes instead of double quotes</li>
+        <li>Missing commas between items</li>
+        <li>Trailing commas</li>
+        <li>Mismatched brackets or braces</li>
+      </ul>
+      <div class="solution-box">
+        <strong>Quick Fix:</strong>
+        <pre><code>// Before (Wrong)
+{
+  name: "John",
+  'age': 30
+}
+
+// After (Correct)
+{
+  "name": "John",
+  "age": 30
+}</code></pre>
+      </div>
+      
+      <h2>2. Invalid Unicode Characters</h2>
+      <div class="error-box">
+        <strong>Error Message:</strong> "Unexpected token <em>X</em> in JSON at position <em>N</em>"
+      </div>
+      <h3>Common Causes</h3>
+      <ul>
+        <li>Unescaped special characters</li>
+        <li>Invalid Unicode sequences</li>
+        <li>Control characters</li>
+      </ul>
+      <div class="solution-box">
+        <strong>Quick Fix:</strong>
+        <pre><code>// Before (Wrong)
+{
+  "message": "He said "Hello""
+}
+
+// After (Correct)
+{
+  "message": "He said \"Hello\""
+}</code></pre>
+      </div>
+      
+      <h2>3. Circular References</h2>
+      <div class="error-box">
+        <strong>Error Message:</strong> "Converting circular structure to JSON"
+      </div>
+      <h3>Common Causes</h3>
+      <ul>
+        <li>Objects that reference themselves</li>
+        <li>Complex nested structures with circular dependencies</li>
+      </ul>
+      <div class="solution-box">
+        <strong>Quick Fix:</strong>
+        <pre><code>// Before (Wrong)
+const obj = {};
+obj.self = obj;
+JSON.stringify(obj); // Error
+
+// After (Correct)
+function replacer(key, value) {
+  if (key === 'self') {
+    return '[Circular]';
+  }
+  return value;
+}
+JSON.stringify(obj, replacer);</code></pre>
+      </div>
+      
+      <h2>4. Incomplete JSON</h2>
+      <div class="error-box">
+        <strong>Error Message:</strong> "Unexpected end of JSON input"
+      </div>
+      <h3>Common Causes</h3>
+      <ul>
+        <li>Truncated JSON response from API</li>
+        <li>Network issues causing incomplete data</li>
+        <li>Accidentally cut off JSON string</li>
+      </ul>
+      <div class="solution-box">
+        <strong>Quick Fix:</strong>
+        <pre><code>// Before (Wrong)
+const jsonString = '{"name": "John"'; // Missing closing brace
+
+// After (Correct)
+const jsonString = '{"name": "John"}'; // Complete JSON
+
+// Or use error handling
+try {
+  const data = JSON.parse(jsonString);
+} catch (error) {
+  console.error('Invalid JSON:', error);
+  // Handle error gracefully
+}</code></pre>
+      </div>
+      
+      <h2>5. Incorrect Content-Type</h2>
+      <div class="error-box">
+        <strong>Error Message:</strong> Varies (often "Unexpected token < in JSON at position 0")
+      </div>
+      <h3>Common Causes</h3>
+      <ul>
+        <li>Server returning HTML instead of JSON</li>
+        <li>Incorrect Content-Type header</li>
+        <li>API returning error page instead of JSON</li>
+      </ul>
+      <div class="solution-box">
+        <strong>Quick Fix:</strong>
+        <pre><code>// Check response before parsing
+fetch('api.example.com/data')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('API error');
+    }
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Expected JSON response');
+    }
+    return response.json();
+  })
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));</code></pre>
+      </div>
+      
+      <h2>Debugging Tools</h2>
+      <p>Use these tools to quickly identify and fix JSON errors:</p>
+      <ul>
+        <li><strong>JSON Doctor:</strong> Our free online tool for validating and formatting JSON</li>
+        <li><strong>JSONLint:</strong> Online JSON validator</li>
+        <li><strong>Visual Studio Code:</strong> Built-in JSON validation</li>
+        <li><strong>jq:</strong> Command-line JSON processor</li>
+      </ul>
+      
+      <h2>Preventative Measures</h2>
+      <ul>
+        <li>Always validate JSON before parsing</li>
+        <li>Use try-catch blocks around JSON.parse()</li>
+        <li>Check API responses for errors before parsing</li>
+        <li>Use consistent JSON formatting</li>
+        <li>Validate user input before serializing to JSON</li>
+      </ul>
+      
+      <h2>Conclusion</h2>
+      <p>JSON parse errors are usually caused by simple syntax issues, invalid characters, or incomplete data. By understanding the common causes and following the quick fixes provided in this guide, you can resolve these errors quickly and efficiently. Remember to always validate your JSON before parsing and handle errors gracefully in your code.</p>
+      
+      <a href="../index.html" class="back-link">← Use JSON Doctor to Validate Your JSON</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

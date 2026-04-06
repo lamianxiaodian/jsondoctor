@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Schema Validation Guide - JSON Doctor Blog</title>
+  <meta name="description" content="Learn how to use JSON Schema to validate JSON documents, define data structures, and ensure data integrity in your applications.">
+  <meta name="keywords" content="JSON Schema, JSON validation, JSON Schema validation, JSON Schema tutorial, JSON validation tool, JSON Schema examples">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>JSON Schema Validation: A Complete Guide</h1>
+    </div>
+    <div class="content">
+      <p>JSON Schema is a powerful vocabulary that allows you to annotate and validate JSON documents. It provides a contract for what a valid JSON document should look like, enabling automatic validation and documentation.</p>
+      
+      <h2>What is JSON Schema?</h2>
+      <p>JSON Schema is a JSON document that describes the structure and constraints of other JSON documents. It defines expected data types, required fields, value ranges, and much more.</p>
+      
+      <h2>Basic Schema Structure</h2>
+      <pre><code>{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/user.schema.json",
+  "title": "User",
+  "description": "A user account",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "User ID"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    }
+  },
+  "required": ["id", "name", "email"]
+}</code></pre>
+      
+      <h2>Common Validation Keywords</h2>
+      
+      <h3>Type Validation</h3>
+      <pre><code>{
+  "type": "string"
+}
+// Valid: "Hello"
+// Invalid: 123
+
+{
+  "type": ["string", "null"]
+}
+// Valid: "Hello" or null</code></pre>
+      
+      <h3>String Constraints</h3>
+      <pre><code>{
+  "type": "string",
+  "minLength": 3,
+  "maxLength": 50,
+  "pattern": "^[a-zA-Z]+$"
+}</code></pre>
+      
+      <h3>Number Constraints</h3>
+      <pre><code>{
+  "type": "number",
+  "minimum": 0,
+  "maximum": 100,
+  "exclusiveMinimum": 0,
+  "multipleOf": 5
+}</code></pre>
+      
+      <h3>Array Constraints</h3>
+      <pre><code>{
+  "type": "array",
+  "items": {"type": "string"},
+  "minItems": 1,
+  "maxItems": 10,
+  "uniqueItems": true
+}</code></pre>
+      
+      <h3>Object Constraints</h3>
+      <pre><code>{
+  "type": "object",
+  "properties": {
+    "name": {"type": "string"}
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}</code></pre>
+      
+      <h2>Advanced Features</h2>
+      
+      <h3>Enumerated Values</h3>
+      <pre><code>{
+  "enum": ["pending", "active", "inactive", "deleted"]
+}</code></pre>
+      
+      <h3>Conditional Validation</h3>
+      <pre><code>{
+  "type": "object",
+  "properties": {
+    "accountType": {"enum": ["personal", "business"]},
+    "companyName": {"type": "string"}
+  },
+  "if": {
+    "properties": {"accountType": {"const": "business"}}
+  },
+  "then": {
+    "required": ["companyName"]
+  }
+}</code></pre>
+      
+      <h3>Combining Schemas</h3>
+      <pre><code>// All must match
+{
+  "allOf": [
+    {"type": "object"},
+    {"required": ["name"]}
+  ]
+}
+
+// At least one must match
+{
+  "anyOf": [
+    {"type": "string"},
+    {"type": "number"}
+  ]
+}
+
+// Exactly one must match
+{
+  "oneOf": [
+    {"type": "string", "minLength": 5},
+    {"type": "string", "maxLength": 3}
+  ]
+}
+
+// Must not match
+{
+  "not": {"type": "null"}
+}</code></pre>
+      
+      <h2>Format Validation</h2>
+      <p>JSON Schema supports built-in formats for common patterns:</p>
+      <ul>
+        <li><code>date-time</code> - ISO 8601 date and time</li>
+        <li><code>date</code> - ISO 8601 date</li>
+        <li><code>time</code> - ISO 8601 time</li>
+        <li><code>email</code> - Email address</li>
+        <li><code>uri</code> - URI</li>
+        <li><code>hostname</code> - Internet hostname</li>
+        <li><code>ipv4</code> - IPv4 address</li>
+        <li><code>ipv6</code> - IPv6 address</li>
+        <li><code>uuid</code> - Universally unique identifier</li>
+      </ul>
+      
+      <h2>Using JSON Schema in Your Projects</h2>
+      <p>Most programming languages have libraries for JSON Schema validation:</p>
+      <ul>
+        <li><strong>JavaScript:</strong> ajv, jsonschema</li>
+        <li><strong>Python:</strong> jsonschema, fastjsonschema</li>
+        <li><strong>Java:</strong> json-schema-validator</li>
+        <li><strong>Go:</strong> gojsonschema</li>
+        <li><strong>PHP:</strong> json-schema</li>
+      </ul>
+      
+      <h2>Benefits of JSON Schema</h2>
+      <ul>
+        <li>Automatic validation of API requests</li>
+        <li>Self-documenting data structures</li>
+        <li>Code generation for multiple languages</li>
+        <li>IDE autocompletion support</li>
+        <li>Consistent data validation across services</li>
+      </ul>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>

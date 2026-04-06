@@ -12,63 +12,40 @@
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, sans-serif}
-    body{background:#0f172a;color:#f1f5f9;padding:2rem 1rem}
-    .container{max-width:1400px;margin:0 auto}
-    .header{text-align:center;margin-bottom:2rem}
-    .header h1{font-size:2.4rem;color:#38bdf8;margin-bottom:0.5rem}
-    .header p{color:#94a3b8}
-    .toolbar{display:flex;gap:0.8rem;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
-    button{padding:0.7rem 1.4rem;border-radius:8px;border:none;background:#1e293b;color:#fff;font-weight:600;cursor:pointer}
-    button:hover{background:#38bdf8;color:#0f172a}
-    .editor-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;height:600px}
-    .box{display:flex;flex-direction:column}
-    .box label{margin-bottom:0.5rem;font-weight:600;color:#cbd5e1}
-    textarea{flex:1;background:#1e293b;color:#f1f5f9;border:1px solid #334155;border-radius:10px;padding:1rem;font-family:monospace;resize:none;outline:none}
-    .footer{text-align:center;margin-top:2rem;color:#94a3b8;font-size:0.9rem}
-    .footer a{color:#38bdf8;text-decoration:none;margin:0 0.4rem}
-    @media (max-width:900px){.editor-wrap{grid-template-columns:1fr;height:auto}}
-  </style>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="blog/index.html" class="nav-link">Blog</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
     <div class="header"><h1>JSON Doctor</h1><p>Free JSON Formatter • Validator • Minifier</p></div>
     <div class="toolbar">
-      <button onclick="format()">Format</button>
-      <button onclick="minify()">Minify</button>
-      <button onclick="clearAll()">Clear</button>
-      <button onclick="copyResult()">Copy</button>
+      <button>Format</button>
+      <button>Minify</button>
+      <button>Clear</button>
+      <button>Copy</button>
+      <button>Example</button>
     </div>
     <div class="editor-wrap">
       <div class="box"><label>Input JSON</label><textarea id="input" placeholder="Paste JSON..."></textarea></div>
       <div class="box"><label>Output</label><textarea id="output" readonly></textarea></div>
     </div>
     <div class="footer">
-      <a href="/about">About</a>
-      <a href="/privacy">Privacy Policy</a>
-      <a href="/terms">Terms</a>
-      <a href="/guide">User Guide</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms</a>
+      <a href="guide.html">User Guide</a>
+      <a href="blog/index.html">Blog</a>
     </div>
   </div>
-  <script>
-    const i=document.getElementById('input'),o=document.getElementById('output');
-    function sanitizeInput(input) {
-      return input.replace(/[<>&"']/g, (char) => {
-        const entityMap = {
-          '<': '&lt;',
-          '>': '&gt;',
-          '&': '&amp;',
-          '"': '&quot;',
-          "'": '&#39;'
-        };
-        return entityMap[char];
-      });
-    }
-    function format(){try{o.value=JSON.stringify(JSON.parse(i.value),null,2)}catch(e){o.value="Invalid JSON: "+sanitizeInput(e.message)}}
-    function minify(){try{o.value=JSON.stringify(JSON.parse(i.value))}catch(e){o.value="Invalid JSON: "+sanitizeInput(e.message)}}
-    function clearAll(){i.value='';o.value=''}
-    function copyResult(){if(o.value){navigator.clipboard.writeText(o.value).then(()=>alert('Copied')).catch(err=>console.error('Copy failed:', err))}}
-  </script>
+  <script src="js/script.js"></script>
+  <script src="js/theme.js"></script>
 </body>
 </html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6086081767943870" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Common JSON Errors and Debugging - JSON Doctor Blog</title>
+  <meta name="description" content="Learn how to identify and fix common JSON errors, including syntax issues, encoding problems, and parsing failures.">
+  <meta name="keywords" content="JSON errors, JSON syntax error, JSON parse error, fix JSON errors, JSON debugging, common JSON mistakes">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data: https://*.google.com https://*.gstatic.com; font-src 'self'; object-src 'none'; frame-src 'none';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-left"><a href="../index.html" class="nav-logo">JSON Doctor</a></div>
+      <div class="nav-right">
+        <a href="index.html" class="nav-link">Blog</a>
+        <a href="../about.html" class="nav-link">About</a>
+        <a href="../guide.html" class="nav-link">Guide</a>
+        <button class="theme-toggle"><span>☀️</span> Light Mode</button>
+      </div>
+    </div>
+    <div class="header">
+      <h1>Common JSON Errors and How to Debug Them</h1>
+    </div>
+    <div class="content">
+      <p>JSON errors can be frustrating, especially when error messages are cryptic. This guide covers the most common JSON errors and provides practical solutions for debugging them.</p>
+      
+      <h2>1. Missing or Mismatched Quotes</h2>
+      <div class="error">
+        <strong>Error:</strong> Property names and string values must use double quotes.
+      </div>
+      <pre><code>// WRONG
+{
+  name: "John",
+  'email': 'john@example.com'
+}
+
+// CORRECT
+{
+  "name": "John",
+  "email": "john@example.com"
+}</code></pre>
+      
+      <h2>2. Trailing Commas</h2>
+      <div class="error">
+        <strong>Error:</strong> JSON does not allow trailing commas after the last item in arrays or objects.
+      </div>
+      <pre><code>// WRONG
+{
+  "items": [1, 2, 3,],
+  "name": "John",
+}
+
+// CORRECT
+{
+  "items": [1, 2, 3],
+  "name": "John"
+}</code></pre>
+      
+      <h2>3. Missing Commas</h2>
+      <div class="error">
+        <strong>Error:</strong> Commas are required between items in arrays and objects.
+      </div>
+      <pre><code>// WRONG
+{
+  "name": "John"
+  "age": 30
+}
+
+// CORRECT
+{
+  "name": "John",
+  "age": 30
+}</code></pre>
+      
+      <h2>4. Unescaped Special Characters</h2>
+      <div class="error">
+        <strong>Error:</strong> Special characters in strings must be escaped.
+      </div>
+      <pre><code>// WRONG
+{
+  "message": "He said "Hello"",
+  "path": "C:\Users\Documents"
+}
+
+// CORRECT
+{
+  "message": "He said \"Hello\"",
+  "path": "C:\\Users\\Documents"
+}</code></pre>
+      
+      <h2>5. Invalid Number Formats</h2>
+      <div class="error">
+        <strong>Error:</strong> Numbers must be valid JSON numbers.
+      </div>
+      <pre><code>// WRONG
+{
+  "price": 19.99.99,
+  "hex": 0xFF,
+  "nan": NaN,
+  "infinity": Infinity
+}
+
+// CORRECT
+{
+  "price": 19.99,
+  "hex": 255,
+  "nan": null,
+  "infinity": null
+}</code></pre>
+      
+      <h2>6. Mismatched Brackets</h2>
+      <div class="error">
+        <strong>Error:</strong> All brackets must be properly matched and nested.
+      </div>
+      <pre><code>// WRONG
+{
+  "users": [
+    {"name": "John"}
+  ,
+  "count": 1
+}
+
+// CORRECT
+{
+  "users": [
+    {"name": "John"}
+  ],
+  "count": 1
+}</code></pre>
+      
+      <h2>7. Using undefined</h2>
+      <div class="error">
+        <strong>Error:</strong> undefined is not a valid JSON value.
+      </div>
+      <pre><code>// WRONG
+{
+  "name": undefined
+}
+
+// CORRECT
+{
+  "name": null
+}
+
+// Or omit the field entirely
+{}</code></pre>
+      
+      <h2>Debugging Tips</h2>
+      
+      <h3>1. Use Online Validators</h3>
+      <p>Use our <a href="/">JSON Doctor</a> tool to quickly validate and format your JSON. It will highlight errors and show you exactly where the problem is.</p>
+      
+      <h3>2. Check Character by Character</h3>
+      <pre><code>function findJsonError(json) {
+  try {
+    JSON.parse(json);
+    return "Valid JSON";
+  } catch (e) {
+    const match = e.message.match(/position (\d+)/);
+    if (match) {
+      const pos = parseInt(match[1]);
+      const context = json.substring(Math.max(0, pos - 20), pos + 20);
+      return `Error at position ${pos}: ...${context}...`;
+    }
+    return e.message;
+  }
+}</code></pre>
+      
+      <h3>3. Use a Linter</h3>
+      <p>Install a JSON linter in your IDE to catch errors as you type.</p>
+      
+      <h3>4. Pretty Print for Clarity</h3>
+      <pre><code>const ugly = '{"name":"John","age":30}';
+const pretty = JSON.stringify(JSON.parse(ugly), null, 2);
+console.log(pretty);</code></pre>
+      
+      <h2>Common Error Messages</h2>
+      <ul>
+        <li><strong>Unexpected token:</strong> Usually a syntax error like missing quotes or commas</li>
+        <li><strong>Unexpected end of JSON:</strong> Missing closing brackets or incomplete JSON</li>
+        <li><strong>Unexpected number:</strong> Invalid number format</li>
+        <li><strong>Expected property name:</strong> Missing or invalid property name</li>
+      </ul>
+      
+      <a href="../index.html" class="back-link">← Back to JSON Doctor</a>
+    </div>
+    <div class="footer">
+      <a href="../about.html">About</a>
+      <a href="../privacy.html">Privacy Policy</a>
+      <a href="../terms.html">Terms</a>
+      <a href="../guide.html">User Guide</a>
+    </div>
+  </div>
+  <script src="../js/theme.js"></script>
+</body>
+</html>
